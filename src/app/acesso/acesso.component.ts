@@ -55,19 +55,19 @@ export class AcessoComponent implements OnInit {
 
   public cadastro: boolean = false;
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   public exibirPainel(event: string) {
     this.cadastro = event === 'cadastro' ? true : false;
   }
 
   public inicioAnimacao(): void {
-    console.log('inicio da animação');
+    // console.log('inicio da animação');
   }
 
   public fimAnimacao(): void {
-    console.log('fim da animação');
+    // console.log('fim da animação');
   }
 }

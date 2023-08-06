@@ -2,8 +2,12 @@
   <div class="container">
     <div class="logo"></div>
     <div>
-      <div class="add-post"></div>
-      <a href="#" (click)="sair()" style="margin-style: 25px">Sair</a>
+      <div
+        class="add-post"
+        data-toggle="modal"
+        data-target="#exampleModal"
+      ></div>
+      <a href="#" (click)="sair()" style="margin-left: 25px">Sair</a>
     </div>
   </div>
 </nav>
@@ -11,4 +15,5 @@
 <br /><br /><br />
 <div class="container">
   <app-publicacoes></app-publicacoes>
+  <app-incluir-publicacao></app-incluir-publicacao>
 </div>

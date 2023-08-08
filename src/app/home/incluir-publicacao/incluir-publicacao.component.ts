@@ -4,6 +4,10 @@ import { Bd } from '../../bd.service';
 import * as firebase from 'firebase';
 import { Progresso } from 'src/app/progresso.service';
 
+import { Subject } from 'rxjs';
+import { interval } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 @Component({
   selector: 'app-incluir-publicacao',
   templateUrl: './incluir-publicacao.component.html',
@@ -12,6 +16,9 @@ import { Progresso } from 'src/app/progresso.service';
 export class IncluirPublicacaoComponent implements OnInit {
   public email: any
   private imagem: any
+
+  public progressoPublicacao: string = 'pendente'
+  public porcentagemUpload: number = 0
 
   public formulario: FormGroup = new FormGroup({
     'titulo': new FormControl(null)
@@ -36,8 +43,27 @@ export class IncluirPublicacaoComponent implements OnInit {
       titulo: this.formulario.value.titulo,
       imagem: this.imagem[0]
     })
-    console.log(this.progresso.status)
-    console.log(this.progresso.estado)
+
+    let acompanhamentoUpload = interval(1500)
+    let continua = new Subject()
+
+    continua.next(true)
+
+    acompanhamentoUpload.pipe(
+      takeUntil(continua)
+    )
+      .subscribe(() => {
+        console.log(this.progresso.status)
+        console.log(this.progresso.estado)
+        this.progressoPublicacao = 'andamento'
+
+        this.porcentagemUpload = Math.round((this.progresso.estado.bytesTransferred / this.progresso.estado.totalBytes) * 100)
+
+        if (this.progresso.status === 'concluido') {
+          this.progressoPublicacao = 'concluido'
+          continua.next(false)
+        }
+      })
   }
 
   public preparaImagemUpload(event: Event): void {
@@ -45,3 +71,4 @@ export class IncluirPublicacaoComponent implements OnInit {
   }
 
 }
+

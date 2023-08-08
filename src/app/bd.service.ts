@@ -38,7 +38,33 @@ export class Bd {
       )
 
 
-    // firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
-    //   .push({ titulo: publicacao.titulo })
+    firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
+      .push({ titulo: publicacao.titulo })
+  }
+
+  public consultaPublicacoes(emailUsuario: string): any {
+    firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
+      .once('value')
+      .then((snapshot: any) => {
+        console.log(snapshot)
+
+        let publicacoes: Array<any> = [];
+
+        snapshot.forEach((childSnapshot: any) => {
+
+          let publicacao = childSnapshot.val()
+
+          // consultar a URL da imagem
+          firebase.storage().ref()
+            .child(`imagens/${childSnapshot.key}`)
+            .getDownloadURL()
+            .then((url: string) => {
+              publicacao.url_imagem = url
+
+              publicacoes.push(publicacao)
+            })
+        })
+        console.log(publicacoes)
+      })
   }
 }

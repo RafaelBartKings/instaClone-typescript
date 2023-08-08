@@ -44,7 +44,7 @@ export class IncluirPublicacaoComponent implements OnInit {
       imagem: this.imagem[0]
     })
 
-    let acompanhamentoUpload = interval(1500)
+    let acompanhamentoUpload = interval(1000)
     let continua = new Subject()
 
     continua.next(true)

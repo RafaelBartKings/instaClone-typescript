@@ -42,29 +42,40 @@ export class Bd {
       .push({ titulo: publicacao.titulo })
   }
 
-  public consultaPublicacoes(emailUsuario: string): any {
-    firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
-      .once('value')
-      .then((snapshot: any) => {
-        console.log(snapshot)
+  public consultaPublicacoes(emailUsuario: string): Promise<any> {
 
-        let publicacoes: Array<any> = [];
+    return new Promise((resolve, reject) => {
 
-        snapshot.forEach((childSnapshot: any) => {
+      firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
+        .once('value')
+        .then((snapshot: any) => {
+          console.log(snapshot)
 
-          let publicacao = childSnapshot.val()
+          let publicacoes: Array<any> = [];
 
-          // consultar a URL da imagem
-          firebase.storage().ref()
-            .child(`imagens/${childSnapshot.key}`)
-            .getDownloadURL()
-            .then((url: string) => {
-              publicacao.url_imagem = url
+          snapshot.forEach((childSnapshot: any) => {
 
-              publicacoes.push(publicacao)
-            })
+            let publicacao = childSnapshot.val()
+
+            // consultar a URL da imagem
+            firebase.storage().ref()
+              .child(`imagens/${childSnapshot.key}`)
+              .getDownloadURL()
+              .then((url: string) => {
+                publicacao.url_imagem = url
+
+                firebase.database().ref(`usuario_detalhe/${btoa(emailUsuario)}`)
+                  .once('value')
+                  .then((snapshot: any) => {
+
+                    publicacao.nome_usuario = snapshot.val().nome_usuario
+
+                    publicacoes.push(publicacao)
+                  })
+              })
+          })
+          resolve(publicacoes)
         })
-        console.log(publicacoes)
-      })
+    })
   }
 }
